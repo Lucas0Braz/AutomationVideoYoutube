@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 
+from PIL import Image
+from glob import glob
+
 def convert_time2secs(time):
     return sum(x * int(t) for x, t in zip([3600, 60, 1], time.split(":")))
 #print(convert_time2secs('0:06:40'))
@@ -19,6 +22,17 @@ def convert_to_RFC_datetime(year=1900, month=1, day=1, hour=0, minute=0):
     dt = datetime(year, month, day, hour, minute, 0).isoformat() + '.000Z'
     return dt
 
+def resize_image(path2image):
+    file = glob(path2image)
+    img = Image.open(file)
+    width, height = img.size
+    (new_width, new_height) = (width/2, height/2)
+
+    img = img.resize(
+        (round(new_width),
+         round(new_height)),
+        Image.ANTIALIAS)
+    img.save(file, format='png')
 
 #print (convert_to_RFC_datetime(2020,12,14,13,15))
 
@@ -49,5 +63,7 @@ def fromutcformat(utc_str, tz=None):
 
 # without milliseconds ('2020-08-28T02:57:54Z')
 #print('utcformat with seconds: ', utcformat(now, timespec='seconds'))
+
+
 
 

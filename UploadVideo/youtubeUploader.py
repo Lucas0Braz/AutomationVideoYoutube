@@ -123,14 +123,17 @@ def resumable_upload(request, options, service):
 
 
 def post_new_video(path2video, path2thumb, infos):
-
+    print(f'path2video: {path2video}\n path2thumb: {path2thumb} \n infos: {infos}')
     args = VideoDetails.Video(path2video, path2thumb, infos)
     youtube = get_authenticated_service()
 
     try:
         initialize_upload(youtube, args)
     except HttpError as e:
-        print('An HTTP error %d occurred:\n%s') % (e.resp.status, e.content)
+        try:
+            print('An HTTP error occurred:\n%s') % (e.resp.status, e.content)
+        except:
+            print(f'An HTTP error occurred:{e}')
 
 #time4post = hF.convert_to_RFC_datetime(year=2020,month=10,day=18,hour=7,minute=15 )
 #post_new_video(path2video = 'E:\\PODCASTS TRECHOS\\14--18_10_20-18_18_39.mp4',

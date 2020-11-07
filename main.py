@@ -6,7 +6,8 @@ import re
 from DownloadVideo import download_yt_video
 from FileEdits import cut_video_subclip
 import HelperFuncs as hF
-from UploadVideo import youtubeUploader,VideoDetails
+from EditPhotos import GDriveManagement as GDM
+from UploadVideo import youtubeUploader, VideoDetails
 
 from SpreedsheetCommunication import SpreedsheetCommunication
 
@@ -42,8 +43,11 @@ if __name__ == '__main__':
         if re.search(r'^\btrue\b|verdadeiro$', row['Sent'], re.IGNORECASE):
             print('Clipe ja inserido')
             continue
-        if re.search(r'error$', row['Sent'], re.IGNORECASE):
+        if re.search(r'error$|A POSTAR', row['Sent'], re.IGNORECASE):
             print('Clipe com possivel erro')
+            continue
+        if re.search(r'A POSTAR', row['Sent'], re.IGNORECASE):
+            print('Clipe já cortado')
             continue
         res_download = download_yt_video(video_url=row['Link Podcast'], path2save=path2save_podcasts)
         row['Log'] += f"Download Video: severidade={res_download['nu_sev']},info={res_download['log']}"
@@ -59,7 +63,7 @@ if __name__ == '__main__':
         start_time_cut_seconds = hF.convert_time2secs(start_time_cut_str)
         end_time_cut_seconds = hF.convert_time2secs(end_time_cut_str)
 
-        path_trecho = f'{path2save_trechos}\\{line_index}--{current_time}.mp4'
+        path_trecho = f'{path2save_trechos}\\{line_index}-{res_download["video_id"]}--{current_time}.mp4'
         print(f'''\npath2video={path_video_podcast},
                           path_clip={path_trecho},
                           start_video_sec={start_time_cut_seconds},
@@ -70,23 +74,47 @@ if __name__ == '__main__':
                           start_video_sec=start_time_cut_seconds,
                           end_video_sec=end_time_cut_seconds)
         print(row, '\n\n')
+
+        id_image = row['Imagem de Fundo']
+        id_image = re.sub(r'.*?d/(.*?)/view.+', r'\1', id_image)
+        path2image_background = './TemplatesThumbs/imageBackThumb.png'
+        path2thumb = 'Thumbnail.png'
+
+        GDM.download_file_from_google_drive(id_image, path2image_background)
+
+        options = {
+            'format': 'png',
+            'encoding': "iso-8859-1",
+            'enable-local-file-access': None,
+            }#'width': 600, 'disable-smart-width': ''
+
+        html = GDM.prepare_html2conversion(path2html='',
+                                       path2image=rf'{path2image_background}',
+                                       title_image=f'{row["Titulo Imagem"]}')
+        path2temporayHtml = './TemplatesThumbs/temporary.html'
+        f = open(path2temporayHtml, "w")
+        f.write(html)
+        f.close()
+
+        GDM.convert_html2image(path2html=path2temporayHtml,
+                           path2image=rf'{path2thumb}', opt=options)
+
         Comment = """
         date_post_str = f"{row['Data de Postagem']} {row['Hora de Postagem']}"
         print(date_post_str)
         date_post = dt.datetime.strptime(date_post_str, "%d-%m-%Y %H:%M")
 
         
-        path2thumb = 'E:\\TRECHOS THUMBS\\FALOU QUE IA ME CONVIDAR E NEM CHAMOU.png'
         time4post = hF.convert_to_RFC_datetime(year=date_post.year, month=date_post.month,
                                                day=date_post.day, hour=date_post.hour, minute=date_post.minute)
-        print(f'I will upload your video {row["Titulo Video"]} for {time4post}')
-        youtubeUploader.post_new_video(path2video=path_trecho,
+        print(f'I will upload your video {row["Titulo Video"]} forthe date {time4post}')
+        youtubeUploader.post_new_video(path2video=f'{path_trecho}',
                        path2thumb=path2thumb,
                        infos={'title': f'{row["Titulo Video"]}',
                               'description': f'{row["Descrição"]}', 'publishAt': f'{time4post}'})
 
         
-        """
+        #"""
 
         df['Sent'][index] = 'TRUE'
 
