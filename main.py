@@ -6,7 +6,7 @@ import re
 from DownloadVideo import download_yt_video
 from FileEdits import cut_video_subclip
 import HelperFuncs as hF
-from EditPhotos import GDriveManagement as GDM
+from EditPhotos import CreateThumb as CT
 from UploadVideo import youtubeUploader, VideoDetails
 
 from SpreedsheetCommunication import SpreedsheetCommunication
@@ -74,32 +74,42 @@ if __name__ == '__main__':
                           start_video_sec=start_time_cut_seconds,
                           end_video_sec=end_time_cut_seconds)
         print(row, '\n\n')
-
+        #if (row['Sent'] != 'JUST CUT'):
         id_image = row['Imagem de Fundo']
         id_image = re.sub(r'.*?d/(.*?)/view.+', r'\1', id_image)
         path2image_background = './TemplatesThumbs/imageBackThumb.png'
         path2thumb = 'Thumbnail.png'
+        #Comment = """
+        #todo error handling if Imagem Fundo is empty
+        CT.download_file_from_google_drive(id_image, path2image_background)
+        if row['AutoCreateThumb'] == 'VERDADEIRO' and re.search(r'drive\.google\.com|.{30,45}', id_image):
+            options = {
+                'format': 'png',
+                'encoding': "iso-8859-1",
+                'enable-local-file-access': None,
+                }#'width': 600, 'disable-smart-width': ''
 
-        GDM.download_file_from_google_drive(id_image, path2image_background)
+            path2image_background = re.sub(r'.+/.*?\.([a-z]{1,4})', r'\1', path2image_background, re.IGNORECASE)
 
-        options = {
-            'format': 'png',
-            'encoding': "iso-8859-1",
-            'enable-local-file-access': None,
-            }#'width': 600, 'disable-smart-width': ''
+            html = CT.prepare_html2conversion(path2html='',
+                                              path2image=rf'{path2image_background}',
+                                              title_image=f'{row["Titulo Imagem"]}')
+            path2temporayHtml = './TemplatesThumbs/temporary.html'
+            f = open(path2temporayHtml, "w")
+            f.write(html)
+            f.close()
 
-        html = GDM.prepare_html2conversion(path2html='',
-                                       path2image=rf'{path2image_background}',
-                                       title_image=f'{row["Titulo Imagem"]}')
-        path2temporayHtml = './TemplatesThumbs/temporary.html'
-        f = open(path2temporayHtml, "w")
-        f.write(html)
-        f.close()
+            CT.convert_html2image_imgkit(path2html=path2temporayHtml,
+                                         path2image=rf'{path2thumb}', opt=options)
+        #"""
+        elif re.search(r'drive\.google\.com|.{30,45}', id_image):
+            path2thumb = path2image_background
+        else:
+            path2thumb = None
+            print('There is no value at Imagem Fundo, no Thumbnail will be inserted')
 
-        GDM.convert_html2image(path2html=path2temporayHtml,
-                           path2image=rf'{path2thumb}', opt=options)
 
-        Comment = """
+        #Comment = """
         date_post_str = f"{row['Data de Postagem']} {row['Hora de Postagem']}"
         print(date_post_str)
         date_post = dt.datetime.strptime(date_post_str, "%d-%m-%Y %H:%M")
@@ -107,12 +117,16 @@ if __name__ == '__main__':
         
         time4post = hF.convert_to_RFC_datetime(year=date_post.year, month=date_post.month,
                                                day=date_post.day, hour=date_post.hour, minute=date_post.minute)
-        print(f'I will upload your video {row["Titulo Video"]} forthe date {time4post}')
-        youtubeUploader.post_new_video(path2video=f'{path_trecho}',
-                       path2thumb=path2thumb,
-                       infos={'title': f'{row["Titulo Video"]}',
-                              'description': f'{row["Descrição"]}', 'publishAt': f'{time4post}'})
+        video_details = {'title': f'{row["Titulo Video"]}',
+                              'description': f'{row["Descrição"]}', 'publishAt': f'{time4post}', 'keywords': row['keywords']}
 
+        print(f'I will upload your video {row["Titulo Video"]} forthe date {time4post}')
+        if(row['Sent'] != 'JUST CUT'):
+            youtubeUploader.post_new_video(path2video=f'{path_trecho}',
+                       path2thumb=path2thumb,
+                       infos=video_details)
+        else:
+            print('VIDEO WILL NOT BE PUBLISHED')
         
         #"""
 

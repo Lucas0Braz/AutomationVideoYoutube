@@ -143,8 +143,8 @@ def download_yt_best_audio(video_url, path2save, opt):
 def download_yt_best_video(video_url, path2save, subtype='mp4'):
     pass
 
-#download_yt_video_dlYoutube('https://www.youtube.com/watch?v=86ZXHSeTo2Y', path2save='E:\\PODCASTS TRECHOS' )
-#print(get_infos_yt_video_dlYoutube('https://www.youtube.com/watch?v=NujqQx_DMxw', {'tags_yt': True}))
+download_yt_video_dlYoutube('https://youtu.be/ZyfgqMt96uU', path2save='E:\\PODCASTS INTEIROS' )
+#print(get_infos_yt_video_dlYoutube('https://www.youtube.com/watch?v=Wh3cjQsc598', {'tags_yt': True}))
 config = {'format':'bestvideo[ext=mp4]+bestaudio[ext=mp4]/mp4'}
-#download_yt_best_audio('https://www.youtube.com/watch?v=NujqQx_DMxw', r'C:\Users\Usuario\Documents\Jobs\Melhores Podcasts\\', config)
+#download_yt_best_audio('https://youtu.be/XKMnTGmotQY', r'C:\Users\Usuario\Documents\Jobs\Melhores Podcasts\\', config)
 

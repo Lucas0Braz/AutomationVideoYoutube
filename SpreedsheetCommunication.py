@@ -9,7 +9,7 @@ import pandas as pd
 
 class SpreedsheetCommunication():
 
-    def __init__(self, credentials='automacaovideos-c5ce8eea03a2.json', key_spreedsheet='1LWnbn69ut4qxXKoDTpFXLH6mgEHWhrBRiJRKoUpISEU'):
+    def __init__(self, credentials='./automacaovideos-c5ce8eea03a2.json', key_spreedsheet='1LWnbn69ut4qxXKoDTpFXLH6mgEHWhrBRiJRKoUpISEU'):
         self.credentials = credentials
         self.key_spreedsheet = key_spreedsheet
 

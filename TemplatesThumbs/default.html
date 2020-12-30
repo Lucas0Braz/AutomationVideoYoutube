@@ -1,33 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="iso-8859-1">
-    <meta name="imgkit-format" content="png"/>
-    <meta name="imgkit-orientation" content="Landscape"/>
+    <!--<meta name="imgkit-format" content="png"/>-->
+    <!--<meta name="imgkit-orientation" content="Landscape"/>-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
 
     body{
-        height: 700px;
-        width: 1200px;
+        height: 432px;
+        width: 768px;
     }
 
     .text-block {
-        position: absolute;
-        bottom: 76px;
-        right: 20px;
-        width: 470px;
+
         /*background-color: black;*/
         color: white;
-        padding-left: 10px;
-        padding-right: 10px;
         white-space: pre-wrap;
     }
 
     .font-block{
         font-family: Open Sans;
-        font-size: 80px;
+        font-size: 64px;
         text-shadow: 3px 3px 5px #34ebeb;
 
 
@@ -59,13 +54,26 @@
         background-size: cover;
     }
 
+    .img_print {
+        max-width: 650px;
+        max-height:auto;
+        width: 600px;
+        height: auto;
+    }
+
+    .bg-cortina-img {
+        background-repeat: repeat;
+        background-image: url("fundocortina.jpg");
+
+    }
+
 
     </style>
 </head>
 <body>
-<div class="container-lg p-3 bg-white text-white">
-    <div class="container-lg bg-dark text-white">
-        <div style="position: relative;"> <img src="igor3kEsquerda.jpg"><!--{{path2BackgroundImage}}*/-->
+<div class="container-lg p-3 bg-white">
+    <div class="container-lg bg-cortina-img text-white">
+        <div style="position: relative;"> <img src="imageBackThumb.png" class="img_print" ><!--png*/-->
         <div class="logo-block">
             <div class="holder">
                 <img src="Logo Cortes do Flow.jpg" class="img_bck" />
